@@ -1,3 +1,5 @@
+import numpy as np
+
 def lle(X, m, tol, n_rule, k=None, epsilon=None):
     if not isinstance(X, np.ndarray):
         raise ValueError('For LLE an invalid input for parameter X was given')
