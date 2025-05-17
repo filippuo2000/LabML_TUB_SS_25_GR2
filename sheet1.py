@@ -34,6 +34,11 @@ def epsBall(X, epsilon):
     return indcList
 
 def is_graph_connected(NBHs, vertexCount):
+    AdjList = [v.tolist() for v in NBHs]
+    for i in range(vertexCount):
+        for j in AdjList[i]:
+            AdjList[j].append(i)
+
     visited = np.full(vertexCount, False)
     toVisit = [0]
     detected = np.full(vertexCount, False)
@@ -43,7 +48,7 @@ def is_graph_connected(NBHs, vertexCount):
         v = toVisit.pop(0)
         if not visited[v]:
             visited[v] = True
-            for n in NBHs[v]:
+            for n in AdjList[v]:
                 if not detected[n]:
                     detected[n] = True
                     toVisit.append(n)
