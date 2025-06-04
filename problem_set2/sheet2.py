@@ -1,10 +1,8 @@
 """ ps2_implementation.py
 
-MICHAL
 
 PUT YOUR NAME HERE:
-MICHAL SZCZEPANSKI
-
+Michał
 
 Write the functions
 - kmeans
@@ -186,7 +184,21 @@ def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
 
     # Initialization
     if init_kmeans:
-        mu_init, r, _ = kmeans(X, k)
+        # Run kmeans from multiple random starts to find the best result
+        iterations = 100
+        k = 10
+        best_loss = np.inf
+        best_params = None
+        for it in range(iterations):
+            #print(it)
+            mu, r, loss = kmeans(X, k)
+            #print(f"loss: {loss}")
+            if loss < best_loss:
+                best_loss = loss
+                best_params = (mu, r)
+        mu_init = best_params[0]
+        r = best_params[1]
+
         pi = np.bincount(r, minlength=k) / n
         sigma = []
         for j in range(k):
@@ -219,8 +231,8 @@ def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
         gamma = pdfs / denominator                         # (n, k)
 
         # Compute log-likelihood
-        loglik = np.sum(np.log(denominator + 1e-300))
-        print(f"Iteration {iteration:3d}, log-likelihood: {loglik:.6f}")
+        loglik = np.sum(np.log(denominator))
+        #print(f"Iteration {iteration:3d}, log-likelihood: {loglik:.6f}")
 
         # Check for convergence
         if np.abs(loglik - loglik_old) < eps:
