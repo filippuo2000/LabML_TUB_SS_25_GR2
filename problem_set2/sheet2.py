@@ -1,9 +1,5 @@
 """ ps2_implementation.py
 
-
-PUT YOUR NAME HERE:
-Michał
-
 Write the functions
 - kmeans
 - kmeans_agglo
