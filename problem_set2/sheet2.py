@@ -141,6 +141,7 @@ def agglo_dendro(kmloss, mergeidx):
     """
 
     k = kmloss.size
+    maxLoss = kmloss[-1]
     c = np.arange(k)                # array for new indices of clusters after merging
     Z = np.zeros((k-1, 4))
 
@@ -149,13 +150,13 @@ def agglo_dendro(kmloss, mergeidx):
         Z[i, 1] = c[mergeidx[i, 1]]
         c[mergeidx[i, 0]] = k + i
         c[mergeidx[i, 1]] = k + i
-        Z[i, 2] = kmloss[i]
+        Z[i, 2] = kmloss[i] / maxLoss
     
     plt.figure()
     dn = dendrogram(Z)
-    plt.title("Hierarchichal agglomerative Kmeans clustering dendrogramm for k = " + str(k))
+    plt.title("Dendrogramm of hierarch. agglom. Kmeans clustering for k = " + str(k))
     plt.xlabel('Cluster index')
-    plt.ylabel('Increase in criterion function')
+    plt.ylabel('Normalized increase in loss function')
     plt.show()
 
 ### ASSIGNMENT 4 ###
