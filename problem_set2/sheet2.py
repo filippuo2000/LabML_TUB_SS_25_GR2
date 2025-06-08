@@ -1,7 +1,7 @@
 """ ps2_implementation.py
 
 PUT YOUR NAME HERE:
-<FIRST_NAME><LAST_NAME>
+Gustavo Eggert Martinez
 
 
 Write the functions
@@ -148,6 +148,7 @@ def agglo_dendro(kmloss, mergeidx):
     """
 
     k = kmloss.size
+    maxLoss = kmloss[-1]
     c = np.arange(k)                # array for new indices of clusters after merging
     Z = np.zeros((k-1, 4))
 
@@ -156,126 +157,11 @@ def agglo_dendro(kmloss, mergeidx):
         Z[i, 1] = c[mergeidx[i, 1]]
         c[mergeidx[i, 0]] = k + i
         c[mergeidx[i, 1]] = k + i
-        Z[i, 2] = kmloss[i]
+        Z[i, 2] = kmloss[i] / maxLoss
     
     plt.figure()
     dn = dendrogram(Z)
-    plt.title("Hierarchichal agglomerative Kmeans clustering dendrogramm for k = " + str(k))
+    plt.title("Dendrogramm of hierarch. agglom. Kmeans clustering for k = " + str(k))
     plt.xlabel('Cluster index')
-    plt.ylabel('Increase in criterion function')
+    plt.ylabel('Normalized increase in loss function')
     plt.show()
-
-
-################## from Chat GPT -> excklude in submission
-
-def plot_clusters(X, r, k):
-    """
-    Plotte Cluster mit verschiedenen Farben und Pfeilen zum Schwerpunkt.
-    
-    Parameters:
-        X : ndarray of shape (n_samples, 2)
-            Die 2D-Datenpunkte
-        r : ndarray of shape (n_samples,)
-            Der Zuweisungsvektor (Clusterindex pro Punkt)
-        k : int
-            Anzahl der Cluster
-    """
-
-    plt.figure(figsize=(12, 12))
-    colors = plt.cm.tab10(np.linspace(0, 1, k))
-    markers = ['o', 's', '^', 'x', '+', 'D', '*', 'v', '<', '>']
-
-    for i in range(k):
-        points = X[r == i]
-        centroid = points.mean(axis=0)
-        plt.scatter(points[:, 0], points[:, 1], color=colors[i], marker=markers[i % len(markers)], label=f"Cluster {i+1}")
-        plt.arrow(centroid[0], centroid[1], 0.01, 0.01, head_width=0.01, color=colors[i])
-        plt.text(centroid[0] + 0.01, centroid[1] + 0.01, f"Cluster {i+1}", fontsize=9)
-
-    x_min, x_max = X[:, 0].min(), X[:, 0].max()
-    y_min, y_max = X[:, 1].min(), X[:, 1].max()
-    x_range = x_max - x_min
-    y_range = y_max - y_min
-    # max_range = max(x_range, y_range)
-    x_center = (x_min + x_max) / 2
-    y_center = (y_min + y_max) / 2
-    plt.xlim(x_center - x_range / 1.8, x_center + x_range / 1.8)
-    plt.ylim(y_center - y_range / 1.8, y_center + y_range / 1.8)
-    
-    import matplotlib.ticker as ticker
-
-    # Einheitlichen Tick-Abstand setzen (z. B. 0.5)
-    tick_spacing = 0.5
-    plt.gca().xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
-    plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
-    plt.gca().set_aspect('equal')  # gleiches Seitenverhältnis aktivieren
-
-    plt.title("Kmeans Clustering for k = " + str(k))
-    plt.xlabel("X")
-    plt.ylabel("Y")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    # plt.axis('equal')
-    plt.show()
-
-##################
-
-
-def norm_pdf(X, mu, C):
-    """ Computes probability density function for multivariate gaussian
-
-    Input:
-    X: (d x n) data matrix with each datapoint in one column
-    mu: vector for center
-    C: covariance matrix
-
-    Output:
-    pdf value for each data point
-    """
-
-    pass
-
-def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
-    """ Implements EM for Gaussian Mixture Models
-
-    Input:
-    X: (d x n) data matrix with each datapoint in one column
-    k: number of clusters
-    max_iter: maximum number of iterations
-    init_kmeans: whether kmeans should be used for initialisation
-    eps: when log likelihood difference is smaller than eps, terminate loop
-
-    Output:
-    pi: 1 x k matrix of priors
-    mu: (d x k) matrix with each cluster center in one column
-    sigma: list of d x d covariance matrices
-    """
-
-    pass
-
-def plot_gmm_solution(X, mu, sigma):
-    """ Plots covariance ellipses for GMM
-
-    Input:
-    X: (d x n) data matrix with each datapoint in one column
-    mu: (d x k) matrix with each cluster center in one column
-    sigma: list of d x d covariance matrices
-    """
-
-    pass
-
-
-if __name__ == '__main__':
-    # data = np.load("../data/2_gaussians.npy", allow_pickle=True)
-    data = np.load("data/2_gaussians.npy", allow_pickle=True)
-    # print(type(data), data.shape)
-    X = data.T
-
-    for k in range(2, 8):
-        print()
-        print("K = " + str(k))
-        print()
-        mu, r, loss = kmeans(X, k)
-        R, kmloss, mergeidx = kmeans_agglo(X, r)
-        agglo_dendro(kmloss, mergeidx)
