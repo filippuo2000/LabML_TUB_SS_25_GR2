@@ -80,9 +80,14 @@ def cv(X, y, method, params, loss_function=mean_absolute_error, nfolds=10, nrepe
                 avg_error_rate += loss_function(yval, ypred)
         
         # Store average cross-validation loss
-        inst.cvloss = avg_error_rate / (nfolds * nrepetitions)
-        print(f"\nAverage CV loss: {inst.cvloss:.4f}")
-        return inst
+        avg_error_rate /= (nfolds * nrepetitions)
+        
+        # Create final model with best parameters and train on full dataset
+        final_model = method(**dict(zip(params.keys(), combo)))
+        final_model.fit(X, y)
+        final_model.cvloss = avg_error_rate
+        print(f"\nAverage CV loss: {final_model.cvloss:.4f}")
+        return final_model
 
     # Handle multiple parameter combinations case
     best_error_rate = float('inf')
