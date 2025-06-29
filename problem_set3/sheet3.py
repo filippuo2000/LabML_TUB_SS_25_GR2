@@ -225,7 +225,7 @@ class krr:
         return X @ X_prime.T
 
     def _polynomial(self, X, X_prime, d):
-        return np.pow(((X @ X_prime.T) + 1), d)
+        return ((X @ X_prime.T) + 1)**d
 
     def _gaussian(self, X, X_prime, sigma):
         return np.exp(-(np.sum(X**2, axis=1)[:, None] -2*(X @ X_prime.T) + np.sum(X_prime**2, axis=1)[None, :]) / 2*(sigma**2))
